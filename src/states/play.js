@@ -5,10 +5,8 @@
  * Distributed under terms of the MIT license.
  */
 
-require('leapjs-plugins');
-
 import { constants } from '../constants';
-import Leap from 'leapjs';
+import Leap from '../leap';
 
 export default class PlayState extends Phaser.State {
     create() {
@@ -20,15 +18,11 @@ export default class PlayState extends Phaser.State {
                                       { fontSize: 32, align: 'center' });
         this.helpText.anchor.set(0.5);
 
-        this.controller = new Leap.Controller({ enableGestures: true });
-        this.controller.connect();
-
-        this.controller.on('frame', this._onFrame.bind(this));
+        this.controller = new Leap.LeapController();
+        this.controller.on(Leap.LeapListeners.OnRotate, this._handleOnRotate, this);
     }
 
-    _onFrame(frame) {
-        frame.hands.forEach((hand, idx) => {
-            this.logo.rotation = -hand.roll();
-        });
+    _handleOnRotate(angle) {
+        this.logo.rotation = -angle;
     }
 }
